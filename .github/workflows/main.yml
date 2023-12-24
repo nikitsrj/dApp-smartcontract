@@ -24,7 +24,7 @@ jobs:
 
       - name: Install dependencies
         if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
-        run: npm install
+        run: cd frontend && npm install
 
       - name: Run Slither
         uses: crytic/slither-action@v0.1.0
