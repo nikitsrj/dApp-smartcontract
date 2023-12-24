@@ -28,7 +28,12 @@ jobs:
       
       - name: Installing truffle
         run: npm install -g truffle
-
+      - name: Run the build process with Docker
+        uses: addnab/docker-run-action@v3
+        with:
+             image: nicksrj/ganache-cli
+             options: -d -p 7545:8545
+ 
       - name: Compiling the smart contract
         run: truffle compile
 
