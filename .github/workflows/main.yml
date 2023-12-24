@@ -10,7 +10,7 @@ on:
       - staging
 
 jobs:
-  build:
+  CheckOut:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -25,7 +25,24 @@ jobs:
       - name: Install dependencies
         if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
         run: cd frontend && npm install
-      
+  SCA-and-SAST:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: action/checkout@v2
+      - name: Scanning Nodejs project
+        uses: anchore/scan-action@v3
+        with:
+          path: 'frontend/'
+  
+      - name: Run Slither
+        uses: crytic/slither-action@v0.1.0
+        continue-on-error: false
+        id: slither
+        with:
+          target: 'contracts/'
+  Build-and-Test:
+    runs-on: ubuntu-latest
+    steps:
       - name: Installing truffle
         run: npm install -g truffle
  
@@ -35,9 +52,4 @@ jobs:
       - name: Run test cases
         run: truffle test
       
-      # - name: Run Slither
-      #   uses: crytic/slither-action@v0.1.0
-      #   continue-on-error: true
-      #   id: slither
-      #   with:
-      #     target: 'contracts/'
+
