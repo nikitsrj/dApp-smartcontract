@@ -25,10 +25,19 @@ jobs:
       - name: Install dependencies
         if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
         run: cd frontend && npm install
+      
+      - name: Installing truffle
+        run: npm install -g truffle
 
-      - name: Run Slither
-        uses: crytic/slither-action@v0.1.0
-        continue-on-error: true
-        id: slither
-        with:
-          target: 'contracts/'
+      - name: Compiling the smart contract
+        run: truffle compile
+
+      - name: Run test cases
+        run: truffle test
+      
+      # - name: Run Slither
+      #   uses: crytic/slither-action@v0.1.0
+      #   continue-on-error: true
+      #   id: slither
+      #   with:
+      #     target: 'contracts/'
