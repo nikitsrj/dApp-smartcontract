@@ -26,9 +26,10 @@ jobs:
         if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
         run: cd frontend && npm install
   SCA-and-SAST:
+    needs: CheckOut
     runs-on: ubuntu-latest
     steps:
-      - uses: action/checkout@v2
+      - uses: actions/checkout@v2
       - name: Scanning Nodejs project
         uses: anchore/scan-action@v3
         with:
@@ -41,8 +42,10 @@ jobs:
         with:
           target: 'contracts/'
   Build-and-Test:
+    needs: SCA-and-SAST
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Installing truffle
         run: npm install -g truffle
  
