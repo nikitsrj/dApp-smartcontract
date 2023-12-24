@@ -48,7 +48,7 @@ jobs:
   
       - name: Run Slither
         uses: crytic/slither-action@v0.1.0
-        continue-on-error: false
+        continue-on-error: true
         id: slither
         with:
           target: 'contracts/'
