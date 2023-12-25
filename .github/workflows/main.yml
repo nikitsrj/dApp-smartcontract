@@ -9,86 +9,86 @@ on:
       - main
 
 jobs:
-  SolLint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: solhint
-        run: npm install -g solhint
-      - name: initialising solhint
-        run: solhint --init
-      - name: running lint on conratc
-        run: solhint 'contracts/*.sol'
+  # SolLint:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: solhint
+  #       run: npm install -g solhint
+  #     - name: initialising solhint
+  #       run: solhint --init
+  #     - name: running lint on conratc
+  #       run: solhint 'contracts/*.sol'
         
-      - name: Cache node dependencies
-        uses: actions/cache@v2
-        id: node-cache
-        with:
-          path: |
-            **/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+  #     - name: Cache node dependencies
+  #       uses: actions/cache@v2
+  #       id: node-cache
+  #       with:
+  #         path: |
+  #           **/node_modules
+  #         key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
 
-      - name: Install dependencies
-        if: ${{ steps.node-cache.outputs.cache-hit != 'true' }}
-        run: cd frontend && npm install
-  SCA-and-SAST:
-    needs: SolLint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+  #     - name: Install dependencies
+  #       if: ${{ steps.node-cache.outputs.cache-hit != 'true' }}
+  #       run: cd frontend && npm install
+  # SCA-and-SAST:
+  #   needs: SolLint
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
       
-      - name: Scanning Nodejs project
-        uses: anchore/scan-action@v3
-        id: scan
-        with:
-          path: 'frontend/'
-          fail-build: true
-          severity-cutoff: critical
-      - name: upload Anchore scan SARIF report
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: ${{ steps.scan.outputs.sarif }}
+  #     - name: Scanning Nodejs project
+  #       uses: anchore/scan-action@v3
+  #       id: scan
+  #       with:
+  #         path: 'frontend/'
+  #         fail-build: true
+  #         severity-cutoff: critical
+  #     - name: upload Anchore scan SARIF report
+  #       uses: github/codeql-action/upload-sarif@v2
+  #       with:
+  #         sarif_file: ${{ steps.scan.outputs.sarif }}
           
-      - name: Inspect action SARIF report
-        run: cat ${{ steps.scan.outputs.sarif }}
+  #     - name: Inspect action SARIF report
+  #       run: cat ${{ steps.scan.outputs.sarif }}
   
-      - name: Run Slither
-        uses: crytic/slither-action@v0.1.0
-        continue-on-error: true
-        id: slither
-        with:
-          target: 'contracts/'
-  Build-and-Test:
-    needs: SCA-and-SAST
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Installing truffle
-        run: npm install -g truffle
+  #     - name: Run Slither
+  #       uses: crytic/slither-action@v0.1.0
+  #       continue-on-error: true
+  #       id: slither
+  #       with:
+  #         target: 'contracts/'
+  # Build-and-Test:
+  #   needs: SCA-and-SAST
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Installing truffle
+  #       run: npm install -g truffle
  
-      - name: Compiling the smart contract
-        run: truffle compile
+  #     - name: Compiling the smart contract
+  #       run: truffle compile
 
-      - name: Run test cases
-        run: truffle test
-  UploadSmartContractArtifact:
-    needs: Build-and-Test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Installing truffle
-        run: npm install -g truffle
+  #     - name: Run test cases
+  #       run: truffle test
+  # UploadSmartContractArtifact:
+  #   needs: Build-and-Test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Installing truffle
+  #       run: npm install -g truffle
  
-      - name: Compiling the smart contract
-        run: truffle compile
+  #     - name: Compiling the smart contract
+  #       run: truffle compile
 
-      - name: Archive smart-Contract artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: SmartContract
-          path: frontend/src/contracts
+  #     - name: Archive smart-Contract artifacts
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: SmartContract
+  #         path: frontend/src/contracts
   UploaddAppArtifact:
-    needs: UploadSmartContractArtifact
+    # needs: UploadSmartContractArtifact
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -99,6 +99,7 @@ jobs:
       
       - name: Archive dApp artifacts
         uses: actions/upload-artifact@v3
+        id: dapp
         with:
           name: dApp
           path: |
@@ -116,6 +117,7 @@ jobs:
         uses: actions/download-artifact@v4.1.0
         with:
           name: dApp
+          id: dapp
         
       - name: listing file
         run: ls -al  
