@@ -136,7 +136,8 @@ jobs:
           script: |
             whoami
             cd /home/ubuntu/dApp/frontend
-            npm start
+            npm install
+            npm start &
           host: 54.161.63.247
           username: ubuntu
           key: ${{ secrets.SSH_KEY}}
