@@ -104,5 +104,28 @@ jobs:
           path: |
              . 
              !frontend/node_modules
+  Deploy:
+    needs: UploaddAppArtifact
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: download artifact
+        uses: actions/download-artifact@v4.1.0
+        with:
+          name: dApp
+      - name: uploading the artifact to staging server
+        run: rsync -i ${{secrets.SSH_KEY}} ubuntu@54.161.63.247 dApp:/home/ubuntu
+      
+      - name: ls -a via ssh
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: |
+            cd dApp
+            cd frontend
+            npm install
+            npm start
+          host: 54.161.63.247
+          username: ubuntu
+          privateKey: ${{ secrets.SSH_KEY}}
       
 
