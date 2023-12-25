@@ -109,10 +109,15 @@ jobs:
     runs-on: ubuntu-latest
     environment: staging
     steps:
+      - name: listing file
+        run: ls -al
+        
       - name: download artifact
         uses: actions/download-artifact@v4.1.0
-        with:
-          name: dApp
+        
+      - name: listing file
+        run: ls -al  
+        
       - name: uploading the artifact to staging server
         run: rsync -i ${{secrets.SSH_KEY}} ubuntu@54.161.63.247 dApp:/home/ubuntu
       
