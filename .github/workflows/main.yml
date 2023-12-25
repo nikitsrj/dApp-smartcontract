@@ -23,7 +23,7 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: Install dependencies
-        if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+        if: ${{ steps.node-cache.outputs.cache-hit != 'true' }}
         run: cd frontend && npm install
   SCA-and-SAST:
     needs: CheckOut
@@ -65,5 +65,36 @@ jobs:
 
       - name: Run test cases
         run: truffle test
+  UploadSmartContractArtifact:
+    needs: Build-and-Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Installing truffle
+        run: npm install -g truffle
+ 
+      - name: Compiling the smart contract
+        run: truffle compile
+
+      - name: Archive smart-Contract artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: SmartContract
+          path: frontend/src/contracts
+  UploaddAppArtifact:
+    needs: UploadSmartContractArtifact
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Install dependencies
+        if: ${{ steps.node-cache.outputs.cache-hit != 'true' }}
+        run: cd frontend && npm install
+      
+      - name: Archive dApp artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dApp
+          path: .
       
 
