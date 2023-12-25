@@ -137,7 +137,7 @@ jobs:
             whoami
             cd /home/ubuntu/dApp/frontend
             npm install || echo $? && echo 0
-            pm2 --name session1 start npm --start
+            pm2 --name session1 start npm -- start
           host: 54.161.63.247
           username: ubuntu
           key: ${{ secrets.SSH_KEY}}
