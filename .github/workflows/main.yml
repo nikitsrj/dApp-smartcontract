@@ -93,9 +93,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-      - name: Install dependencies
-        if: ${{ steps.node-cache.outputs.cache-hit != 'true' }}
-        run: cd frontend && npm install
+      # - name: Install dependencies
+      #   if: ${{ steps.node-cache.outputs.cache-hit != 'true' }}
+      #   run: cd frontend && npm install
       
       - name: Archive dApp artifacts
         uses: actions/upload-artifact@v3
@@ -121,9 +121,22 @@ jobs:
         
       - name: listing file
         run: ls -al  
-        
-      - name: uploading the artifact to staging server
-        run: rsync -a -i ${{secrets.SSH_KEY}} ubuntu@54.161.63.247 dApp:/home/ubuntu/dApp --exclude .git/ .github/
+
+      - name: rsync
+        uses: D3rHase/rsync-deploy-action@v0.2
+        with:
+        # hostname / IP of the server
+          HOST: 54.161.63.247
+        # ssh port of the server
+          PORT: 22
+    # user of the server
+          USER: ubuntu
+          PRIVATE_SSH_KEY: ${{ secrets.SSH_KEY}}
+          REPOSITORY_PATH: .
+          SERVER_PATH: /home/ubuntu/dApp
+      
+      # - name: uploading the artifact to staging server
+      #   run: rsync -a -i ${{secrets.SSH_KEY}} ubuntu@54.161.63.247 .:/home/ubuntu/dApp --exclude .git/ .github/
       
       - name: ls -a via ssh
         uses: garygrossgarten/github-action-ssh@release
