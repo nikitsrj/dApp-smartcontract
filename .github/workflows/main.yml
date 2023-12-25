@@ -93,9 +93,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-      - name: Install dependencies
-        if: ${{ steps.node-cache.outputs.cache-hit != 'true' }}
-        run: cd frontend && npm install
+      # - name: Install dependencies
+      #   if: ${{ steps.node-cache.outputs.cache-hit != 'true' }}
+      #   run: cd frontend && npm install
       
       - name: Archive dApp artifacts
         uses: actions/upload-artifact@v3
@@ -114,7 +114,7 @@ jobs:
         run: ls -al
         
       - name: download artifact
-        uses: actions/download-artifact@v4.1.0
+        uses: actions/download-artifact@v3
         with:
           name: dApp
           run-id: dapp
