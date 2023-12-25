@@ -134,14 +134,10 @@ jobs:
       
       
       - name: Running App on Server
-        uses: Flaavius/ssh-commands@1.0
+        uses: appleboy/ssh-action@master
         with:
-          command: |
-            cd /home/ubuntu/dApp/frontend
-            npm install
-            npm start
+          command: whoami
           host: 54.161.63.247
           username: ubuntu
-          privateKey: ${{ secrets.SSH_KEY}}
-          tryKeyboard: true
+          key: ${{ secrets.SSH_KEY}}
 
