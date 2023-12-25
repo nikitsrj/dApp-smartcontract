@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: solhint
-        uses: contractshark/inject-solhint-ci@latest
+        uses: contractshark/inject-solhint-ci
         with:
           solhint_input: 'contracts/*.sol'
       - name: Cache node dependencies
