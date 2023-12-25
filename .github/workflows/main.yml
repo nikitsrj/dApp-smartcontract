@@ -10,10 +10,14 @@ on:
       - staging
 
 jobs:
-  CheckOut:
+  SolLint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: solhint
+        uses: contractshark/inject-solhint-ci@latest
+        with:
+          solhint_input: 'contracts/*.sol'
       - name: Cache node dependencies
         uses: actions/cache@v2
         id: node-cache
@@ -26,7 +30,7 @@ jobs:
         if: ${{ steps.node-cache.outputs.cache-hit != 'true' }}
         run: cd frontend && npm install
   SCA-and-SAST:
-    needs: CheckOut
+    needs: SolLint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -95,6 +99,8 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: dApp
-          path: .
+           path: |
+             . 
+             !frontend/node_modules
       
 
