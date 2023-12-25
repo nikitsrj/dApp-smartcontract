@@ -87,59 +87,54 @@ jobs:
   #       with:
   #         name: SmartContract
   #         path: frontend/src/contracts
-  UploaddAppArtifact:
-    # needs: UploadSmartContractArtifact
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+  # UploaddAppArtifact:
+  #   # needs: UploadSmartContractArtifact
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
       
-      # - name: Install dependencies
-      #   if: ${{ steps.node-cache.outputs.cache-hit != 'true' }}
-      #   run: cd frontend && npm install
+  #     # - name: Install dependencies
+  #     #   if: ${{ steps.node-cache.outputs.cache-hit != 'true' }}
+  #     #   run: cd frontend && npm install
       
-      - name: Archive dApp artifacts
-        uses: actions/upload-artifact@v3
-        id: dapp
-        with:
-          name: dApp
-          path: |
-             . 
-             !frontend/node_modules
+  #     - name: Archive dApp artifacts
+  #       uses: actions/upload-artifact@v3
+  #       id: dapp
+  #       with:
+  #         name: dApp
+  #         path: |
+  #            . 
+  #            !frontend/node_modules
   Deploy:
-    needs: UploaddAppArtifact
+    # needs: UploaddAppArtifact
     runs-on: ubuntu-latest
     environment: staging
     steps:
-      - name: listing file
-        run: ls -al
+      # - name: listing file
+      #   run: ls -al
         
-      - name: download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: dApp
-          run-id: dapp
+      # - name: download artifact
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: dApp
+      #     run-id: dapp
         
-      - name: listing file
-        run: ls -al  
+      # - name: listing file
+      #   run: ls -al  
 
-      - name: rsync
-        uses: D3rHase/rsync-deploy-action@v0.2
-        with:
-        # hostname / IP of the server
-          HOST: 54.161.63.247
-        # ssh port of the server
-          PORT: 22
-    # user of the server
-          USER: ubuntu
-          PRIVATE_SSH_KEY: ${{ secrets.SSH_KEY}}
-          REPOSITORY_PATH: .
-          SERVER_PATH: /home/ubuntu/dApp
+      # - name: rsync
+      #   uses: D3rHase/rsync-deploy-action@v0.2
+      #   with:
+      #     HOST: 54.161.63.247
+      #     PORT: 22
+      #     USER: ubuntu
+      #     PRIVATE_SSH_KEY: ${{ secrets.SSH_KEY}}
+      #     REPOSITORY_PATH: .
+      #     SERVER_PATH: /home/ubuntu/dApp
       
-      # - name: uploading the artifact to staging server
-      #   run: rsync -a -i ${{secrets.SSH_KEY}} ubuntu@54.161.63.247 .:/home/ubuntu/dApp --exclude .git/ .github/
       
-      - name: ls -a via ssh
-        uses: garygrossgarten/github-action-ssh@release
+      - name: Running App on Server
+        uses: Flaavius/ssh-commands@1.0
         with:
           command: |
             cd /home/ubuntu/dApp/frontend
@@ -148,5 +143,5 @@ jobs:
           host: 54.161.63.247
           username: ubuntu
           privateKey: ${{ secrets.SSH_KEY}}
-      
+          tryKeyboard: true
 
