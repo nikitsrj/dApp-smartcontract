@@ -14,9 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: solhint
-        uses: contractshark/inject-solhint-ci@stable
-        with:
-          solhint_input: 'contracts/*.sol'
+        run: npm install -g solhint
+      - name: initialising solhint
+        run: solhint --init
+      - name: running lint on conratc
+        run: solhint 'contracts/*.sol'
         
       - name: Cache node dependencies
         uses: actions/cache@v2
