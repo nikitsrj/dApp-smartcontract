@@ -123,7 +123,7 @@ jobs:
         uses: D3rHase/rsync-deploy-action@v0.2
         with:
           HOST: ${{ secrets.HOST}}
-          PORT: ${{ secrets.PORT}}
+          PORT: ${{ secrets.SSH_PORT}}
           USER: ${{ secrets.USER_NAME}}
           PRIVATE_SSH_KEY: ${{ secrets.SSH_KEY}}
           REPOSITORY_PATH: .
