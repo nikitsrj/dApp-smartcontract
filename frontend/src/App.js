@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Web3 from 'web3';
 import HelloWorldContract from './contracts/HelloWorld.json';
 import './App.css';
-API_KEY='xx2349shfei2234jidh2iuh432'
 function App() {
     const [contract, setContract] = useState(null);
     const [message, setMessage] = useState('');
